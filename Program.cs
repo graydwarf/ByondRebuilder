@@ -21,7 +21,7 @@ namespace ByondRebuilder
         /// </summary>
         private static void Main(string[] args)
         {
-            // A get it right or else design pattern.
+            // TODO: Improve. A get it right or else design pattern.
             pathToProjectDmeFile = args[0];
             pathToProjectDmb = args[1];
             security = args[2];
