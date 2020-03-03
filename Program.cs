@@ -1,24 +1,49 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.Diagnostics;
 using System.Threading;
 
-namespace ByondMeUpdater
+namespace ByondRebuilder
 {
     class Program
     {
-        const string PathToDmExe = @"C:\Program Files (x86)\BYOND\bin\dm.exe";
-        const string PathToDreamDaemonExe = @"C:\Program Files (x86)\BYOND\bin\dreamdaemon.exe";
+        const string DefaultPathToByondBin = @"C:\Program Files (x86)\BYOND\bin";
+        const string ByondCompiler = @"dm.exe";
+        const string ByondDreamDaemon = @"DreamDaemon.exe";
+        const string DefaultSecurity = @"safe";
 
-        private static void Main()
+        private static string pathToByondBin;
+        private static string pathToProjectDmeFile;
+        private static string pathToProjectDmb;
+        private static string security;
+
+        /// <summary>
+        /// Example Short Usage: ByondRebuilder.exe "C:\MyProject\MyProject.dme" "C:\MyProject\MyProject.dmb"
+        /// Example Full Usage: ByondRebuilder.exe "C:\MyProject\MyProject.dme" "C:\MyProject\MyProject.dmb" trusted "K:\BYOND\bin"
+        /// </summary>
+        private static void Main(string[] args)
         {
-            LaunchProcess("TaskKill", "/IM DreamDaemon.exe /F");
+            // A get it right or else design pattern.
+            pathToProjectDmeFile = args[0];
+            pathToProjectDmb = args[1];
+            security = args[2];
+            pathToByondBin = args[3];
+
+            if (string.IsNullOrEmpty(pathToByondBin))
+            {
+                pathToByondBin = DefaultPathToByondBin;
+            }
+
+            if (string.IsNullOrEmpty(security))
+            {
+                security = DefaultSecurity;
+            }
+
+            LaunchProcess("TaskKill", $"/IM {ByondDreamDaemon} /F");
             Thread.Sleep(2000);
 
-            CompileDme(@"-clean E:\Dad\Projects\BYOND\Applications\ByondMe\ByondMe.dme");
+            CompileDme($@"-clean {pathToProjectDmeFile}");
             Thread.Sleep(2000);
 
-            LaunchDreamDaemon(@"E:\Dad\Projects\BYOND\Applications\ByondMe\ByondMe.dmb -trusted");
+            LaunchDreamDaemon($@"{pathToProjectDmb} -{security}");
         }
 
         // Could be handy as a shortcut when debugging locally/offline
@@ -29,12 +54,12 @@ namespace ByondMeUpdater
 
         private static void CompileDme(string args)
         {
-            LaunchProcess(PathToDmExe, args);
+            LaunchProcess($@"{pathToByondBin}\{ByondCompiler}", args);
         }
 
         private static void LaunchDreamDaemon(string pathToDmbWithArgs)
         {
-            LaunchProcess(PathToDreamDaemonExe, pathToDmbWithArgs, ProcessWindowStyle.Normal);
+            LaunchProcess($@"{pathToByondBin}\{ByondDreamDaemon}", pathToDmbWithArgs, ProcessWindowStyle.Normal);
         }
 
         private static void LaunchProcess(string fileName, string additionalArgs = "", ProcessWindowStyle windowStyle = ProcessWindowStyle.Hidden)
