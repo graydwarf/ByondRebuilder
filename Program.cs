@@ -21,11 +21,19 @@ namespace ByondRebuilder
         /// </summary>
         private static void Main(string[] args)
         {
-            // TODO: Improve. A get it right or else design pattern.
+            // TODO: Improve arg handling
             pathToProjectDmeFile = args[0];
             pathToProjectDmb = args[1];
-            security = args[2];
-            pathToByondBin = args[3];
+
+            if (args.Length > 2)
+            {
+                security = args[2];
+            }
+
+            if (args.Length > 3)
+            {
+                pathToByondBin = args[3];
+            }
 
             if (string.IsNullOrEmpty(pathToByondBin))
             {
