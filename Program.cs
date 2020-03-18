@@ -46,10 +46,10 @@ namespace ByondRebuilder
             }
 
             LaunchProcess("TaskKill", $"/IM {ByondDreamDaemon} /F");
-            Thread.Sleep(2000);
+            Thread.Sleep(5000);
 
             CompileDme($@"-clean {pathToProjectDmeFile}");
-            Thread.Sleep(2000);
+            Thread.Sleep(5000);
 
             LaunchDreamDaemon($@"{pathToProjectDmb} -{security}");
         }
